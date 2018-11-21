@@ -2,6 +2,21 @@ const keys = require("./keys");
 const Twitter = require("twitter");
 const Spotify = require("node-spotify-api");
 const request = require("request");
+const fs = require("fs");
+
+const doWhatItSays = () => {
+  fs.readFile("random.txt", "utf8", (err, data) => {
+    if (err) throw err;
+
+    const dataArr = data.split(",");
+
+    if (dataArr.length === 2) {
+      pick(dataArr[0], dataArr[1]);
+    } else if (dataArr.length === 1) {
+      pick(dataArr[0]);
+    }
+  });
+};
 
 const getMyTweets = () => {
   const client = new Twitter(keys.twitterKeys);
@@ -49,7 +64,9 @@ const getMeSpotify = songName => {
 
 const getMovie = movieName => {
   request(
-    "http://omdbapi.com/?t=" + movieName + "&y=&plot=short&r=json&apikey=trilogy",
+    "http://omdbapi.com/?t=" +
+      movieName +
+      "&y=&plot=short&r=json&apikey=trilogy",
     function(error, response, body) {
       console.log("error:", error); // Print the error if one occurred
       console.log("statusCode:", response && response.statusCode); // Print the response status code if a response was received
@@ -72,9 +89,12 @@ const pick = (caseData, functionData) => {
     case "spotify-this-song":
       getMeSpotify(functionData);
       break;
-    case "movie-this" :
-        getMovie(functionData);
-        break;
+    case "movie-this":
+      getMovie(functionData);
+      break;
+    case "do-what-it-says":
+      doWhatItSays();
+      break;
     default:
       console.log("LIRI does not know that!");
   }
