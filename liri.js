@@ -1,3 +1,6 @@
+// Read and set environment variables
+require("dotenv").config({path: __dirname + '/.env'});
+
 const keys = require("./keys");
 const Twitter = require("twitter");
 const Spotify = require("node-spotify-api");
