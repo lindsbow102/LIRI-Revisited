@@ -1,7 +1,8 @@
 // Read and set environment variables
-require("dotenv").config({path: __dirname + '/.env'});
+require("dotenv").config({ path: __dirname + "/.env" });
 
 const keys = require("./keys");
+const axios = require("axios");
 const Twitter = require("twitter");
 const Spotify = require("node-spotify-api");
 const request = require("request");
@@ -84,6 +85,36 @@ const getMovie = movieName => {
   );
 };
 
+const getArtistEvent = artist => {
+  var queryUrl =
+    "https://rest.bandsintown.com/artists/" +
+    artist +
+    "/events?app_id=lindsey&date=upcoming";
+
+  axios
+    .get(queryUrl)
+    .then(function(response) {
+      for (let i = 0; i < 5; i++) {
+        //console.log(response.data);
+        console.log(" ");
+        console.log("Tickets on Sale: " + response.data[i].on_sale_datetime);
+        console.log("Show date: " + response.data[i].datetime);
+        console.log("Show venue: " + response.data[i].venue.name);
+        console.log(
+          `Show location: ${response.data[i].venue.city} ${
+            response.data[i].venue.region
+          }`
+        );
+        console.log(`Country: ${response.data[i].venue.country}`);
+        console.log(" ");
+        console.log("------------------------");
+      }
+    })
+    .catch(function(error) {
+      console.log(error);
+    });
+};
+
 const pick = (caseData, functionData) => {
   switch (caseData) {
     case "my-tweets":
@@ -94,6 +125,9 @@ const pick = (caseData, functionData) => {
       break;
     case "movie-this":
       getMovie(functionData);
+      break;
+    case "concert-this":
+      getArtistEvent(functionData);
       break;
     case "do-what-it-says":
       doWhatItSays();
