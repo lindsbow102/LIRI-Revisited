@@ -94,6 +94,10 @@ const getArtistEvent = artist => {
   axios
     .get(queryUrl)
     .then(function(response) {
+
+      if (!response.data.length) {
+        console.log(`Unable to find any results for ${artist}!`);
+      }
       for (let i = 0; i < 5; i++) {
         //console.log(response.data);
         console.log(" ");
