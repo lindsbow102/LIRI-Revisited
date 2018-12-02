@@ -107,4 +107,6 @@ const runThis = (argOne, argTwo) => {
   pick(argOne, argTwo);
 };
 
-runThis(process.argv[2], process.argv[3]);
+// Eliminate need for quotation marks in movie and song choices
+const userChoice = process.argv.slice(3).join(" ");
+runThis(process.argv[2], userChoice);
