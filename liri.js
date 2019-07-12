@@ -6,6 +6,7 @@ const axios = require("axios");
 const Twitter = require("twitter");
 const Spotify = require("node-spotify-api");
 const request = require("request");
+const moment = require("moment");
 const fs = require("fs");
 
 const doWhatItSays = () => {
@@ -67,56 +68,45 @@ const getMeSpotify = songName => {
 };
 
 const getMovie = movieName => {
-  request(
+  const queryURL =
     "http://omdbapi.com/?t=" +
-      movieName +
-      "&y=&plot=short&r=json&apikey=trilogy",
-    function(error, response, body) {
-      console.log("error:", error); // Print the error if one occurred
-      console.log("statusCode:", response && response.statusCode); // Print the response status code if a response was received
-      const jsonData = JSON.parse(body);
-      console.log("-------------------");
-      console.log("Title: " + jsonData.Title);
-      console.log("Year: " + jsonData.Year);
-      console.log("Rating: " + jsonData.Rated);
-      console.log("Actors: " + jsonData.Actors);
-      console.log("Plot: " + jsonData.Plot);
-    }
-  );
+    movieName +
+    "&y=&plot=short&r=json&apikey=trilogy";
+  axios.get(queryURL).then(function(response) {
+    //console.log(response);
+    const jsonData = response.data;
+    console.log("-------------------");
+    console.log("Title: " + jsonData.Title);
+    console.log("Year: " + jsonData.Year);
+    console.log("Rating: " + jsonData.Rated);
+    console.log("Actors: " + jsonData.Actors);
+    console.log("Plot: " + jsonData.Plot);
+  });
 };
 
 const getArtistEvent = artist => {
-  var queryUrl =
+  const queryURL =
     "https://rest.bandsintown.com/artists/" +
     artist +
-    "/events?app_id=lindsey&date=upcoming";
-
-  axios
-    .get(queryUrl)
-    .then(function(response) {
-
-      if (!response.data.length) {
-        console.log(`Unable to find any results for ${artist}!`);
-      }
-      for (let i = 0; i < 5; i++) {
-        //console.log(response.data);
-        console.log(" ");
-        console.log("Tickets on Sale: " + response.data[i].on_sale_datetime);
-        console.log("Show date: " + response.data[i].datetime);
-        console.log("Show venue: " + response.data[i].venue.name);
-        console.log(
-          `Show location: ${response.data[i].venue.city} ${
-            response.data[i].venue.region
-          }`
-        );
-        console.log(`Country: ${response.data[i].venue.country}`);
-        console.log(" ");
-        console.log("------------------------");
-      }
-    })
-    .catch(function(error) {
-      console.log(error);
-    });
+    "/events?app_id=codingbootcamp";
+  axios.get(queryURL).then(function(response) {
+    for (var i = 0; i < response.data.length; i++) {
+      console.log("Venue name: " + response.data[i].venue.name);
+      console.log(
+        "Venue location: " +
+          response.data[i].venue.city +
+          ", " +
+          response.data[i].venue.region +
+          ", " +
+          response.data[i].venue.country
+      );
+      console.log(
+        "Venue date: " +
+          moment(response.data[i].venue.datetime).format("MM/DD/YYYY")
+      );
+      console.log("----------");
+    }
+  });
 };
 
 const pick = (caseData, functionData) => {
